@@ -3,10 +3,14 @@ class AchievementController < ApplicationController
     @achievement = Achievement.new
   end
 
+  def index
+    @achievements = Achievement.public_access
+  end
+
   def create
     @achievement = Achievement.new(achievement_params)
     if @achievement.save
-      redirect_to root_path, notice: 'Achievement has been created'
+      redirect_to achievement_path(@achievement), notice: 'Achievement has been created'
       return
     end
     render :new
@@ -14,7 +18,27 @@ class AchievementController < ApplicationController
 
   def show
     @achievement = Achievement.find params[:id]
-    @description = Redcarpet::Markdown.new(Redcarpet::Render::HTML).render(@achievement.description)
+  end
+
+  def edit
+    @achievement = Achievement.find(params[:id])
+  end
+
+  def update
+    @achievement = Achievement.find(params[:id])
+    if @achievement.update_attributes(achievement_params)
+      redirect_to achievement_path(@achievement), notice: 'Achievement has been updated'
+      return
+    end
+    render :edit
+  end
+
+  def destroy
+    @achievement = Achievement.find(params[:id])
+    if @achievement.destroy
+      redirect_to achievement_path
+      return
+    end
   end
 
   private
